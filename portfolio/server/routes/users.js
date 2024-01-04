@@ -1,6 +1,10 @@
 const express = require('express');
 const router = express.Router();
+const bcrypt = require('bcrypt');
 const knex = require('knex')(require('../knexfile'));
+const cors = require('cors');
+
+router.use(cors())
 
 /**
  * @typedef {Object} User
@@ -38,10 +42,36 @@ router.get('/:id', async (req, res) => {
  * @returns {User} - Created user object
  */
 router.post('/', async (req, res) => {
-  const { username } = req.body;
-  const { password } = req.body;
-  const [newUser] = await knex('users').insert({ username, password }).returning('*');
+  const { username, password } = req.body;
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  const [newUser] = await knex('users').insert({ username, password: hashedPassword }).returning('*');
   res.json(newUser);
+});
+
+/**
+ * Login a user.
+ * @route POST /users/login
+ * @param {string} username.body.required - User's username
+ * @param {string} password.body.required - User's password
+ * @returns {User} - User object with ID and username
+ */
+router.post('/login', async (req, res) => {
+  const { username, password } = req.body;
+
+  const user = await knex('users').where({ username }).first();
+
+  if (!user) {
+    return res.status(401).json({ error: 'Invalid username' });
+  }
+
+  const passwordMatch = await bcrypt.compare(password, user.password);
+
+  if (!passwordMatch) {
+    return res.status(401).json({ error: 'Invalid password' });
+  }
+
+  res.json({ id: user.id, username: user.username });
 });
 
 /**
