@@ -2,7 +2,7 @@
 
 ## ChatGPT
 
-- [ChatGPT Log]()
+- [ChatGPT Log](https://chat.openai.com/share/70cf610b-f78d-44bd-b346-f66928204729)
 
 ## ThreeJS
 
@@ -34,6 +34,7 @@
 ## Conventions
 
 - [Git Branch Naming Convention](https://medium.com/@abhay.pixolo/naming-conventions-for-git-branches-a-cheatsheet-8549feca2534)
+- [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/)
 
 ## Other
 
